@@ -32,7 +32,6 @@ namespace _02_Messstation
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            Messwert.Id = RandomNumberGenerator.GetInt32(0, 1000000);
             /*if (!ModelState.IsValid)
             {
                 return Page();

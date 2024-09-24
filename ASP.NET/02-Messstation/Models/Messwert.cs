@@ -8,5 +8,5 @@ public class Messwert
     
     // Foreign Key
     public int MessstationId { get; set; }
-    public Messstation Messstation { get; set; } = default!;
+    public Messstation? Messstation { get; set; } = default!;
 }
