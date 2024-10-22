@@ -11,6 +11,8 @@ builder.Services.AddDbContext<MessstationContext>(options =>
 
 var app = builder.Build();
 
+app.MapControllers();
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

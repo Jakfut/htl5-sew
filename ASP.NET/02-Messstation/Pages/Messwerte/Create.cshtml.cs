@@ -22,7 +22,7 @@ namespace _02_Messstation
 
         public IActionResult OnGet()
         {
-        ViewData["MessstationId"] = new SelectList(_context.Messstation, "Id", "Id");
+        ViewData["MessstationId"] = new SelectList(_context.Messstation, "Id", "Name");
             return Page();
         }
 
