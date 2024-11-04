@@ -7,7 +7,7 @@ public record GetMesswertDto(int Id, int Wert, string Einheit, int MessstationId
     
 }
 
-public static class MesswertMapper
+public static class GetMesswertMapper
 {
     public static GetMesswertDto Map(Messwert messwert)
     {

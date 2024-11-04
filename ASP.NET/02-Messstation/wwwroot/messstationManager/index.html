@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messstation Manager</title>
+    <script>
+        const apiUrl = 'http://localhost:5282/api/messtation';
+
+        // Get a Messstation by ID
+        async function getMessstationById(id) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`);
+                if (!response.ok) throw new Error('Messstation not found');
+                const data = await response.json();
+                console.log(data);
+                document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error fetching Messstation:', error);
+                alert('Error fetching Messstation');
+            }
+        }
+
+        // Update a Messstation by ID
+        async function updateMessstationById(id, name, betriebsdauer) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, betriebsdauer })
+                });
+                if (!response.ok) throw new Error('Failed to update Messstation');
+                alert('Messstation updated successfully');
+            } catch (error) {
+                console.error('Error updating Messstation:', error);
+                alert('Error updating Messstation');
+            }
+        }
+
+        // Create a new Messstation
+        async function createMessstation(name, betriebsdauer) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, betriebsdauer })
+                });
+                if (!response.ok) throw new Error('Failed to create Messstation');
+                alert('Messstation created successfully');
+            } catch (error) {
+                console.error('Error creating Messstation:', error);
+                alert('Error creating Messstation');
+            }
+        }
+
+        // Add a Messwert to a Messstation
+        async function addMesswertToMessstation(messstationId, wert, einheit) {
+            try {
+                const response = await fetch(`${apiUrl}/${messstationId}/messwert`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ wert, einheit })
+                });
+                if (!response.ok) throw new Error('Failed to add Messwert');
+                alert('Messwert added successfully');
+            } catch (error) {
+                console.error('Error adding Messwert:', error);
+                alert('Error adding Messwert');
+            }
+        }
+
+        // Delete a Messstation by ID
+        async function deleteMessstationById(id) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('Failed to delete Messstation');
+                alert('Messstation deleted successfully');
+                location.reload();
+            } catch (error) {
+                console.error('Error deleting Messstation:', error);
+                alert('Error deleting Messstation');
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Messstation Manager</h1>
+
+<div>
+    <h2>Messstationen</h2>
+    <script type="module">
+        let data;
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Failed to fetch Messstationen');
+            data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Error fetching Messstationen:', error);
+            alert('Error fetching Messstationen');
+        }
+        
+        // Display the data in a table
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Betriebsdauer</th>
+                <th>Messwerte</th>
+                <th>Actions</th>
+            </tr>
+            ${data.map(messstation => `
+                <tr>
+                    <td>${messstation.id}</td>
+                    <td>${messstation.name}</td>
+                    <td>${messstation.betriebsdauer}</td>
+                    <!-- for messwerte add a link that redirects to messstatinoManager/messwerte?=(id) -->
+                    <td><a href="http://localhost:5282/messstationmanager/messstation.html?id=${messstation.id}">Messwerte</a></td>
+                    <!-- for actions add buttons to get, update, delete messstation -->
+                    <td>
+                        <button onclick="deleteMessstationById(${messstation.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('')}
+        `;
+        document.body.appendChild(table);
+    </script>
+</div>
+<!--<div>
+    <h2>Get Messstation by ID</h2>
+    <input type="number" id="getId" placeholder="Enter ID">
+    <button onclick="getMessstationById(document.getElementById('getId').value)">Get Messstation</button>
+</div>
+
+<div>
+    <h2>Update Messstation by ID</h2>
+    <input type="number" id="updateId" placeholder="Enter ID">
+    <input type="text" id="updateName" placeholder="Enter Name">
+    <input type="number" id="updateBetriebsdauer" placeholder="Enter Betriebsdauer">
+    <button onclick="updateMessstationById(document.getElementById('updateId').value, document.getElementById('updateName').value, document.getElementById('updateBetriebsdauer').value)">
+        Update Messstation
+    </button>
+</div>
+
+<div>
+    <h2>Create Messstation</h2>
+    <input type="text" id="createName" placeholder="Enter Name">
+    <input type="number" id="createBetriebsdauer" placeholder="Enter Betriebsdauer">
+    <button onclick="createMessstation(document.getElementById('createName').value, document.getElementById('createBetriebsdauer').value)">
+        Create Messstation
+    </button>
+</div>
+
+<div>
+    <h2>Add Messwert to Messstation</h2>
+    <input type="number" id="messstationId" placeholder="Enter Messstation ID">
+    <input type="number" id="messwertValue" placeholder="Enter Wert">
+    <input type="text" id="messwertEinheit" placeholder="Enter Einheit">
+    <button onclick="addMesswertToMessstation(document.getElementById('messstationId').value, document.getElementById('messwertValue').value, document.getElementById('messwertEinheit').value)">
+        Add Messwert
+    </button>
+</div>
+
+<div>
+    <h2>Delete Messstation by ID</h2>
+    <input type="number" id="deleteId" placeholder="Enter ID">
+    <button onclick="deleteMessstationById(document.getElementById('deleteId').value)">Delete Messstation</button>
+</div>
+
+<div>
+    <h2>Result</h2>
+    <pre id="result"></pre>
+</div>-->
+</body>
+</html>

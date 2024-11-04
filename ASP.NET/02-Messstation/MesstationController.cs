@@ -32,16 +32,16 @@ namespace _02_Messstation
 
         // GET: api/Messtation/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Messstation>> GetMessstation(int id)
+        public async Task<ActionResult<GetMessstationDto>> GetMessstation(int id)
         {
-            var messstation = await _context.Messstation.FindAsync(id);
+            var messstation = await _context.Messstation.Include(m => m.Messwerte).Where(m => m.Id == id).FirstOrDefaultAsync();
 
             if (messstation == null)
             {
                 return NotFound();
             }
 
-            return messstation;
+            return MessstationMapper.Map(messstation);
         }
 
         // PUT: api/Messtation/5
@@ -84,6 +84,27 @@ namespace _02_Messstation
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMessstation", new { id = messstation.Id }, messstation);
+        }
+        
+        [HttpPost("{id}/messwert")]
+        public async Task<ActionResult<PostMesswertDto>> PostMesswert(int id, PostMesswertDto messwertDto)
+        {
+            var messstation = await _context.Messstation.FindAsync(id);
+            if (messstation == null)
+            {
+                return NotFound();
+            }
+
+            var messwert = new Messwert
+            {
+                Wert = messwertDto.Wert,
+                Einheit = messwertDto.Einheit,
+                Messstation = messstation
+            };
+            _context.Messwert.Add(messwert);
+            await _context.SaveChangesAsync();
+
+            return Ok(GetMesswertMapper.Map(messwert));
         }
 
         // DELETE: api/Messtation/5
