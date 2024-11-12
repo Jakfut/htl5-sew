@@ -15,19 +15,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Messwert[0].Wert)
+                @Html.DisplayNameFor(model => model.Messwerte[0].Wert)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Messwert[0].Einheit)
+                @Html.DisplayNameFor(model => model.Messwerte[0].Einheit)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Messwert[0].Messstation)
+                @Html.DisplayNameFor(model => model.Messwerte[0].Messstation)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Messwert) {
+@foreach (var item in Model.Messwerte) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Wert)

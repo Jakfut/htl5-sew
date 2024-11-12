@@ -7,36 +7,6 @@
     <script>
         const apiUrl = 'http://localhost:5282/api/messtation';
 
-        // Get a Messstation by ID
-        async function getMessstationById(id) {
-            try {
-                const response = await fetch(`${apiUrl}/${id}`);
-                if (!response.ok) throw new Error('Messstation not found');
-                const data = await response.json();
-                console.log(data);
-                document.getElementById('result').innerText = JSON.stringify(data, null, 2);
-            } catch (error) {
-                console.error('Error fetching Messstation:', error);
-                alert('Error fetching Messstation');
-            }
-        }
-
-        // Update a Messstation by ID
-        async function updateMessstationById(id, name, betriebsdauer) {
-            try {
-                const response = await fetch(`${apiUrl}/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, name, betriebsdauer })
-                });
-                if (!response.ok) throw new Error('Failed to update Messstation');
-                alert('Messstation updated successfully');
-            } catch (error) {
-                console.error('Error updating Messstation:', error);
-                alert('Error updating Messstation');
-            }
-        }
-
         // Create a new Messstation
         async function createMessstation(name, betriebsdauer) {
             try {
@@ -49,26 +19,10 @@
                 alert('Messstation created successfully');
             } catch (error) {
                 console.error('Error creating Messstation:', error);
-                alert('Error creating Messstation');
+                alert('Error creating Messstation', error);
             }
         }
-
-        // Add a Messwert to a Messstation
-        async function addMesswertToMessstation(messstationId, wert, einheit) {
-            try {
-                const response = await fetch(`${apiUrl}/${messstationId}/messwert`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ wert, einheit })
-                });
-                if (!response.ok) throw new Error('Failed to add Messwert');
-                alert('Messwert added successfully');
-            } catch (error) {
-                console.error('Error adding Messwert:', error);
-                alert('Error adding Messwert');
-            }
-        }
-
+        
         // Delete a Messstation by ID
         async function deleteMessstationById(id) {
             try {
@@ -83,6 +37,23 @@
                 alert('Error deleting Messstation');
             }
         }
+        
+        // Edit a Messstation by ID
+        async function editMessstation(id, name, betriebsdauer) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, betriebsdauer })
+                });
+                if (!response.ok) throw new Error('Failed to edit Messstation');
+                alert('Messstation edited successfully');
+                location.reload();
+            } catch (error) {
+                console.error('Error editing Messstation:', error);
+                alert(error);
+            }
+        }
     </script>
 </head>
 <body>
@@ -90,6 +61,15 @@
 
 <div>
     <h2>Messstationen</h2>
+    <table id="messstationenTable">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Betriebsdauer</th>
+            <th>Messwerte</th>
+            <th>Actions</th>
+        </tr>
+    </table>
     <script type="module">
         let data;
         try {
@@ -101,78 +81,95 @@
             console.error('Error fetching Messstationen:', error);
             alert('Error fetching Messstationen');
         }
-        
-        // Display the data in a table
-        const table = document.createElement('table');
-        table.innerHTML = `
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Betriebsdauer</th>
-                <th>Messwerte</th>
-                <th>Actions</th>
-            </tr>
-            ${data.map(messstation => `
-                <tr>
-                    <td>${messstation.id}</td>
-                    <td>${messstation.name}</td>
-                    <td>${messstation.betriebsdauer}</td>
-                    <!-- for messwerte add a link that redirects to messstatinoManager/messwerte?=(id) -->
-                    <td><a href="http://localhost:5282/messstationmanager/messstation.html?id=${messstation.id}">Messwerte</a></td>
-                    <!-- for actions add buttons to get, update, delete messstation -->
-                    <td>
-                        <button onclick="deleteMessstationById(${messstation.id})">Delete</button>
-                    </td>
-                </tr>
-            `).join('')}
-        `;
-        document.body.appendChild(table);
-    </script>
-</div>
-<!--<div>
-    <h2>Get Messstation by ID</h2>
-    <input type="number" id="getId" placeholder="Enter ID">
-    <button onclick="getMessstationById(document.getElementById('getId').value)">Get Messstation</button>
-</div>
 
-<div>
-    <h2>Update Messstation by ID</h2>
-    <input type="number" id="updateId" placeholder="Enter ID">
-    <input type="text" id="updateName" placeholder="Enter Name">
-    <input type="number" id="updateBetriebsdauer" placeholder="Enter Betriebsdauer">
-    <button onclick="updateMessstationById(document.getElementById('updateId').value, document.getElementById('updateName').value, document.getElementById('updateBetriebsdauer').value)">
-        Update Messstation
-    </button>
+        const messstationTable = document.getElementById('messstationenTable');
+
+        data.forEach(messstation => {
+            const row = messstationTable.insertRow();
+            row.insertCell(0).innerText = messstation.id;
+            row.insertCell(1).innerText = messstation.name;
+            row.insertCell(2).innerText = messstation.betriebsdauer;
+            row.insertCell(3).innerHTML = `<a href="http://localhost:5282/messstationmanager/messstation.html?id=${messstation.id}">Messwerte</a>`;
+            row.insertCell(4).innerHTML = `
+                <button onclick="deleteMessstationById(${messstation.id})">Delete</button>
+            `;
+        });
+    </script>
 </div>
 
 <div>
     <h2>Create Messstation</h2>
-    <input type="text" id="createName" placeholder="Enter Name">
-    <input type="number" id="createBetriebsdauer" placeholder="Enter Betriebsdauer">
-    <button onclick="createMessstation(document.getElementById('createName').value, document.getElementById('createBetriebsdauer').value)">
-        Create Messstation
-    </button>
+    
+    <form onsubmit="createMessstation(document.getElementById('createName').value, document.getElementById('createBetriebsdauer').value);">
+        <label for="createName">Name:</label><br>
+        <input type="text" id="createName" name="createName"><br>
+        <label for="createBetriebsdauer">Betriebsdauer:</label><br>
+        <input type="number" id="createBetriebsdauer" name="createBetriebsdauer"><br><br>
+        <input type="submit" value="Create">
+    </form>
 </div>
 
 <div>
     <h2>Add Messwert to Messstation</h2>
-    <input type="number" id="messstationId" placeholder="Enter Messstation ID">
-    <input type="number" id="messwertValue" placeholder="Enter Wert">
-    <input type="text" id="messwertEinheit" placeholder="Enter Einheit">
-    <button onclick="addMesswertToMessstation(document.getElementById('messstationId').value, document.getElementById('messwertValue').value, document.getElementById('messwertEinheit').value)">
-        Add Messwert
-    </button>
+    <form>
+        <label for="addMesswertId">Messstation Name:</label><br>
+        <select id="addMesswertId" name="addMesswertId">
+            <script type="module">
+                let data;
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error('Failed to fetch Messstationen');
+                    data = await response.json();
+                    console.log(data);
+                } catch (error) {
+                    console.error('Error fetching Messstationen:', error);
+                    alert('Error fetching Messstationen');
+                }
+                
+                data.forEach(messstation => {
+                    document.getElementById('addMesswertId').innerHTML += `<option value="${messstation.id}">${messstation.name}</option>`;
+                });
+            </script>
+        </select>
+        <br>
+        <label for="addMesswertWert">Messwert:</label><br>
+        <input type="number" id="addMesswertWert" name="addMesswertWert"><br>
+        <label for="addMesswertEinheit">Einheit:</label><br>
+        <input type="text" id="addMesswertEinheit" name="addMesswertEinheit"><br><br>
+        <input type="submit" value="Add Messwert">
+    </form>
 </div>
 
 <div>
-    <h2>Delete Messstation by ID</h2>
-    <input type="number" id="deleteId" placeholder="Enter ID">
-    <button onclick="deleteMessstationById(document.getElementById('deleteId').value)">Delete Messstation</button>
+    <h2>Edit Messstation</h2>
+    <form onsubmit="editMessstation(document.getElementById('editId').value, document.getElementById('editName').value, document.getElementById('editBetriebsdauer').value);">
+        <label for="editId">Messstation Name:</label><br>
+        <select id="editId" name="editId">
+            <script type="module">
+                let data;
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error('Failed to fetch Messstationen');
+                    data = await response.json();
+                    console.log(data);
+                } catch (error) {
+                    console.error('Error fetching Messstationen:', error);
+                    alert('Error fetching Messstationen');
+                }
+
+                data.forEach(messstation => {
+                    document.getElementById('editId').innerHTML += `<option value="${messstation.id}">${messstation.name}</option>`;
+                });
+            </script>
+        </select>
+        <br>
+        <label for="editName">Name:</label><br>
+        <input type="text" id="editName" name="editName"><br>
+        <label for="editBetriebsdauer">Betriebsdauer:</label><br>
+        <input type="number" id="editBetriebsdauer" name="editBetriebsdauer"><br><br>
+        <input type="submit" value="Edit">
+    </form>
 </div>
 
-<div>
-    <h2>Result</h2>
-    <pre id="result"></pre>
-</div>-->
 </body>
 </html>

@@ -19,11 +19,11 @@ namespace _02_Messstation
             _context = context;
         }
 
-        public IList<Messwert> Messwert { get;set; } = default!;
+        public IList<Messwert> Messwerte { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Messwert = await _context.Messwert
+            Messwerte = await _context.Messwert
                 .Include(m => m.Messstation).ToListAsync();
         }
     }

@@ -127,5 +127,21 @@ namespace _02_Messstation
         {
             return _context.Messstation.Any(e => e.Id == id);
         }
+        
+        // DELETE: api/Messtation/5/messwert/1
+        [HttpDelete("{id}/messwert/{messwertId}")]
+        public async Task<IActionResult> DeleteMesswert(int id, int messwertId)
+        { 
+            var messwert = await _context.Messwert.FindAsync(messwertId);
+            if (messwert == null)
+            {
+                return NotFound();
+            }
+
+            _context.Messwert.Remove(messwert);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

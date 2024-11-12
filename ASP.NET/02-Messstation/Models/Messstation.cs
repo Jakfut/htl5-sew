@@ -1,4 +1,7 @@
-﻿namespace _02_Messstation.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace _02_Messstation.Models;
 
 public class Messstation
 {
