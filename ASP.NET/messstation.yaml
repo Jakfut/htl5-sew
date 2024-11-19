@@ -1,0 +1,88 @@
+﻿openapi: "3.1.0"
+info:
+  title: "ASP_NET API"
+  description: "ASP_NET API"
+  version: "1.0.0"
+servers:
+  - url: "https://ASP_NET"
+paths:
+  /api/Messtation:
+    get:
+      summary: "GET api/Messtation"
+      responses:
+        "200":
+          description: "OK"
+    post:
+      summary: "POST api/Messtation"
+      responses:
+        "200":
+          description: "OK"
+  /api/Messtation/{id}:
+    get:
+      summary: "GET api/Messtation/{id}"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+    put:
+      summary: "PUT api/Messtation/{id}"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+    delete:
+      summary: "DELETE api/Messtation/{id}"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+  /api/Messtation/{id}/messwert:
+    post:
+      summary: "POST api/Messtation/{id}/messwert"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"
+  /api/Messtation/{id}/messwert/{messwertId}:
+    delete:
+      summary: "DELETE api/Messtation/{id}/messwert/{messwertId}"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: "messwertId"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "OK"

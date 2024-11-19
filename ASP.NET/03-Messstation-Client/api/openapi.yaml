@@ -1,0 +1,103 @@
+openapi: 3.1.0
+info:
+  description: ASP_NET API
+  title: ASP_NET API
+  version: 1.0.0
+servers:
+- url: https://ASP_NET
+paths:
+  /api/Messtation:
+    get:
+      responses:
+        "200":
+          description: OK
+      summary: GET api/Messtation
+    post:
+      responses:
+        "200":
+          description: OK
+      summary: POST api/Messtation
+  /api/Messtation/{id}:
+    delete:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+      summary: "DELETE api/Messtation/{id}"
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+      summary: "GET api/Messtation/{id}"
+    put:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+      summary: "PUT api/Messtation/{id}"
+  /api/Messtation/{id}/messwert:
+    post:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+      summary: "POST api/Messtation/{id}/messwert"
+  /api/Messtation/{id}/messwert/{messwertId}:
+    delete:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      - explode: false
+        in: path
+        name: messwertId
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: OK
+      summary: "DELETE api/Messtation/{id}/messwert/{messwertId}"
+components:
+  schemas: {}
+
